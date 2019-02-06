@@ -2,7 +2,11 @@ import os
 import csv
 
 MY_DIR = os.path.dirname(os.path.realpath(__file__))
-MY_CONFIG_FILE = 'starting_board_10x10.csv'
+MY_CONFIG_FILE = 'starting_board_40x40_acorn.csv'
+
+
+# listt = [0,1,2]
+# print(listt[-1])
 
 
 def display_board(board, gen):
@@ -19,17 +23,119 @@ def display_board(board, gen):
     """
     print(f'Displaying board for generation {gen}')
 
-    # TODO: complete the display board code
+    for row in range(len(board)):
+        for col in range(len(board[0])-1):
+            if board[row][col] == 0:
+                print('. ', end='')
+            else:
+                print('* ', end='')
+        if board[row][len(board[0])-1]==0:
+            print('. ')
+        else:
+            print('* ')
+
 
 def count_num_neighbors(board, row, col):
     """
     take the row and col and find out how many neighbors the square has
     """
-    pass
+    arround = []
+    if row != 0 and row != (len(board)-1):
+        row1 = row-1
 
-    # TODO: calculate the number of neighbors that a square has
+        if col != 0 and col != (len(board[0])-1):
+            col1 = col-1
+            for i in range(3):
+                for i2 in range(3):
+                    if i ==1 and i2 ==1:
+                        pass
+                    else:
+                        if board[row1+i][col1+i2]==1:
+                            arround.append(1)
+        else:
+            if col==0:
+                for i in range(3):
+                    for i2 in range(2):
+                        if i ==1 and i2 ==0:
+                            pass
+                        else:
+                            if board[row1+i][col+i2]==1:
+                                arround.append(1)
+            elif col==(len(board[0])-1):
+                col1 = col-1
+                for i in range(3):
+                    for i2 in range(2):
+                        if i ==1 and i2 ==1:
+                            pass
+                        else:
+                            if board[row1+i][col1+i2]==1:
+                                arround.append(1)
+            else:
+                pass
+    else:
+        if row ==0:
+            if col != 0 and col != (len(board[0])-1):
+                col1 = col-1
+                for i in range(2):
+                    for i2 in range(3):
+                        if i ==0 and i2 ==1:
+                            pass
+                        else:
+                            if board[row+i][col1+i2]==1:
+                                arround.append(1)
+            else:
+                if col==0:
+                    for i in range(1):
+                        for i2 in range(2):
+                            if i ==0 and i2 ==0:
+                                pass
+                            else:
+                                if board[row+i][col+i2]==1:
+                                    arround.append(1)
+                elif col==(len(board[0])-1):
+                    col1 = col-1
+                    for i in range(2):
+                        for i2 in range(2):
+                            if i ==0 and i2 ==1:
+                                pass
+                            else:
+                                if board[row+i][col1+i2]==1:
+                                    arround.append(1)
+                else:
+                    pass
+        if row ==(len(board)-1):
+            row1 = row-1
+            if col != 0 and col != (len(board[0])-1):
+                col1 = col-1
+                for i in range(2):
+                    for i2 in range(3):
+                        if i ==1 and i2 ==1:
+                            pass
+                        else:
+                            if board[row1+i][col1+i2]==1:
+                                arround.append(1)
+            else:
+                if col==0:
+                    for i in range(2):
+                        for i2 in range(2):
+                            if i ==1 and i2 ==0:
+                                pass
+                            else:
+                                if board[row1+i][col+i2]==1:
+                                    arround.append(1)
+                elif col==(len(board[0])-1):
+                    col1 = col-1
+                    for i in range(2):
+                        for i2 in range(2):
+                            if i ==1 and i2 ==1:
+                                pass
+                            else:
+                                if board[row1+i][col1+i2]==1:
+                                    arround.append(1)
+                else:
+                    pass
+    return(arround)
 
-    return -1
 
 def update_board(board):
     """
@@ -62,18 +168,51 @@ def update_board(board):
          map.  ie., a corner square has only 3 neighboring squares.  a
          Non-corner Edge square has 5 neighbors.
     """
-    pass
+    matrix_new = []
+    for row in range(len(board)):
+        mat_new = []
+        for col in range(len(board[0])):
+            mat_new.append(board[row][col])
+        matrix_new.append(mat_new)
 
-    # TODO: modify the board to reflect the next generation
+    for row in range(len(board)):
+        for col in range(len(board[0])):
+            if board[row][col] ==1:
+                arround = count_num_neighbors(board, row, col)
+                if len(arround)==2 or len(arround)==3:
+                    pass
+                else:
+                    matrix_new[row][col]=0
+            if board[row][col] ==0:
+                arround = count_num_neighbors(board, row, col)
+                if len(arround)==3:
+                    matrix_new[row][col]=1
+                else:
+                    pass
+
+    for row in range(len(matrix_new)):
+        for col in range(len(matrix_new[0])):
+            board[row][col]=matrix_new[row][col]
+
+    return(board)
+
 
 def load_board(board, infile_name):
     """
     open the CSV file and read in the values.  These will
     all be 1s or 0s and should populate the initial board.
     """
-    pass
 
-    # TODO: load the csv file int the board
+    with open(infile_name, 'r') as f:
+        stuff = csv.reader(f)
+        for row in stuff:
+            herro= []
+            for n in range(len(row)):
+                herro.append(int(row[int(n)]))
+            board.append(herro)
+    return(board)
+#  or can just append entire row, but be careful
+
 
 def main():
     """
@@ -89,8 +228,8 @@ def main():
     infile_name = MY_DIR + '/' + MY_CONFIG_FILE
 
     load_board(board, infile_name)
-
-    generations_to_do = 10
+    # print(load_board(board, infile_name))
+    generations_to_do = 1000
 
     for i in range(generations_to_do-1):
         display_board(board, i)
